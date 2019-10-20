@@ -79,17 +79,16 @@ export default {
         clan_introduction: this.clan_introduction
       };
 
-      let clan_exists_flag = firebase.database().ref('/clans/')
+      firebase.database().ref('/clans/')
         .orderByChild('clan_name').startAt(this.clan_name).endAt(this.clan_name)
         .once('value', (snapshot) => {
           if(snapshot.val()) {
-            return false;
+            console.log(snapshot.val());
           } else {
-            return true;
+            console.log('fail');
           }
         });
-        console.log('a');
-console.log(clan_exists_flag);
+        
       // console.log(this.clanName);
       // let newClanId = firebase.database().ref().child('clans').push().key;
       // let updates = {};
