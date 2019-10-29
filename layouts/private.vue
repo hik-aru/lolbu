@@ -28,8 +28,7 @@ export default {
   },
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
-      this.loginCheck(user)
-      let user_storage = localStorage.getItem('vuex');
+      this.loginCheck(user);
       
       // let user_storage = localStorage.getItem('vuex')
       // console.log(user);
@@ -42,13 +41,15 @@ export default {
       //   // message に変更があったときのハンドラを解除
       //   ref_message.limitToLast(10).off('child_added', this.childAdded)
       // }
-    })
+    });
+
+    this.init();
   },
 
   methods : {
     ...mapActions(['setUser']),
 
-    loginCheck (user) {
+    loginCheck(user) {
       const db_user = firebase.database().ref('users/' + user.uid);
       
       db_user.on('value', (snapshot) => {
@@ -66,6 +67,15 @@ export default {
         this.setUser(user ? user : {});
       });
     },
+
+    init() {
+      console.log(this.$store.state.user);
+      // let clan_data = firebase.database().ref('/clans/')
+      //   .orderByChild('user_id').startAt(this.$store.state.user.uid).endAt(this.$store.state.user.uid)
+      //   .once('value', (snapshot) => { console.log(snapshot.val())})
+
+      // console.log(clan_data);
+    }
   },
   
   components: {

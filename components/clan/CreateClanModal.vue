@@ -10,6 +10,7 @@
           <div class="flex-child-1">
             <div class="clan-name-input">
               <label>クラン名</label>
+              <p v-if="valid_clan_name">既に使われている名前です。</p>
               <input v-model="clan_name" type="text" placeholder="クラン名を入力してください。" required>
             </div>
             <div class="clan-introduction-input">
@@ -38,6 +39,7 @@
 
 <script>
 import firebase from '~/plugins/firebase'
+import { mapActions } from 'vuex'
 
 export default {
   data() {
@@ -45,9 +47,12 @@ export default {
       clan_name: '',
       clan_introduction: '',
       uploadedImage: '',
+      valid_clan_name: false
     }
   },
   methods: {
+    ...mapActions(['setClans']),
+
     onFileChange(e) {
       const files = e.target.files || e.dataTransfer.files;
       this.createImage(files[0]);
@@ -76,31 +81,46 @@ export default {
       var clan;
       let postData = {
         clan_name: this.clan_name,
-        clan_introduction: this.clan_introduction
+        clan_introduction: this.clan_introduction,
+        user_id: this.$store.state.user.uid
       };
 
       firebase.database().ref('/clans/')
         .orderByChild('clan_name').startAt(this.clan_name).endAt(this.clan_name)
         .once('value', (snapshot) => {
           if(snapshot.val()) {
-            console.log(snapshot.val());
+            this.valid_clan_name = true;
+            console.log(this.$store.state.user.uid);
+            this.$parent.close();
           } else {
-            console.log('fail');
+            // clanデータの登録
+            let newClanId = firebase.database().ref().child('clans').push().key;
+            let updates = {};
+            updates['/clans/' + newClanId] = postData;
+            firebase.database().ref().update(updates);
+            // firebase.database().ref('/clan_names/').set({
+            //   name: this.clan_name
+            // });
+
+            // clan_memberデータの登録
+            let clan_member = {}
+            let data = {};
+            clan_member[this.$store.state.user.uid] = {
+              role: 'master'
+            };
+            data['/clan_members/' + newClanId] = clan_member;
+
+            firebase.database().ref().update(data);
+
+            this.setClans({
+              clan_id: newClanId,
+              clan_name: this.clan_name
+            })
+            
+            this.$parent.close();
           }
         });
-        
-      // console.log(this.clanName);
-      // let newClanId = firebase.database().ref().child('clans').push().key;
-      // let updates = {};
-      // updates['/clans/' + newClanId] = postData;
-      // firebase.database().ref().update(updates);
-      // firebase.database().ref('/clan_names/').set({
-      //   name: this.clan_name
-      // });
-      // updates['/user-posts/' + uid + '/' + newPostKey] = postData;
-      console.log('aa');
-      this.$parent.close();
-    }
+    },
   },
 }
 </script>
@@ -140,6 +160,12 @@ export default {
             font-size: 14px;
             font-weight: bold;
             color: #87909c;
+          }
+          p {
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 7px;
+            color: #F04747;
           }
           input {
             font-size: 16px;
