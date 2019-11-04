@@ -8,9 +8,8 @@ export const state = () => ({
 export const mutations = {
   loadState (state) {
     if (localStorage.getItem('vuex')) {
-      const store = localStorage.getItem('vuex');
-      console.log(store);
-      // this.replaceState(Object.assign(state, store));
+      const state = localStorage.getItem('vuex');
+      console.log(state);
     }
   },
   setUser (state, payload) {

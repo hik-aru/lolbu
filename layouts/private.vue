@@ -19,11 +19,11 @@ export default {
   
   data () {
     return {
-       user: {},
+      user: {},
     }
   },
   computed: {
-    ...mapState(['user']),
+    // ...mapState(['user']),
     ...mapGetters(['isAuthenticated'])
   },
   mounted() {
@@ -47,7 +47,7 @@ export default {
   },
 
   methods : {
-    ...mapActions(['setUser']),
+    ...mapActions(['setUser', 'loadState']),
 
     loginCheck(user) {
       const db_user = firebase.database().ref('users/' + user.uid);
@@ -68,14 +68,16 @@ export default {
       });
     },
 
-    init() {
+    async init() {
+      await this.loadState();
       console.log(this.$store.state.user);
-      // let clan_data = firebase.database().ref('/clans/')
-      //   .orderByChild('user_id').startAt(this.$store.state.user.uid).endAt(this.$store.state.user.uid)
-      //   .once('value', (snapshot) => { console.log(snapshot.val())})
+
+      let clan_data = firebase.database().ref('/clans/')
+        .orderByChild('user_id').startAt(this.$store.state.user.uid).endAt(this.$store.state.user.uid)
+        .once('value', (snapshot) => { console.log(snapshot.val())})
 
       // console.log(clan_data);
-    }
+    },
   },
   
   components: {
