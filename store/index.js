@@ -8,15 +8,19 @@ export const state = () => ({
 export const mutations = {
   loadState (state) {
     if (localStorage.getItem('vuex')) {
-      const state = localStorage.getItem('vuex');
+      state = JSON.parse(localStorage.getItem('vuex'));
+      
       console.log(state);
+      // if(!state) {
+
+      // }
     }
   },
   setUser (state, payload) {
     state.user = {
       uid : payload.uid,
       display_name : payload.displayName,
-      emial : payload.email
+      email : payload.email
     }
     console.log(state.user);
   },
