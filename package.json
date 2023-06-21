@@ -14,7 +14,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
     "firebase": "^7.2.0",
-    "nuxt": "^2.0.0",
+    "nuxt": "^3.4.3",
     "nuxt-buefy": "^0.3.2",
     "vue-sidebar-menu": "^4.3.0",
     "vuex-persistedstate": "^2.5.4"
